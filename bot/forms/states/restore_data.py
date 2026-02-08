@@ -1,0 +1,21 @@
+from aiogram.fsm.state import State, StatesGroup
+
+class FormRestoreData(StatesGroup):
+    kdtk = State()
+    nomor_co = State()
+    alasan = State()
+    restore_from_db_replikasi = State()
+    restore_from_bckmysql = State()
+    restore_from_dthr = State()
+    restore_from_posrealtime = State()
+    restore_from_file_jual = State()
+    ibdata_mb_akhir = State()
+    keterangan = State()
+    autov2 = State()
+    hu_stok = State()
+    hu_spd = State()
+    hu_pkm = State()
+    datetime_end = State()
+    lampiran_1 = State()
+    lampiran_2 = State()
+    simpan = State()
