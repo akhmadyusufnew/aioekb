@@ -20,7 +20,7 @@ from bot.forms.validators import verify_kdtk, verify_datetime
 from bot.forms.fsm_helper import handle_cancel_form, generate_id_work, send_file_preview, delete_file, download_and_save_file
 
 from bot.forms.states import FormTutupPOSReplikasi
-from bot.forms.questions import BaseFormQuestion
+from bot.forms.questions import TutupPOSReplikasiFormQuestion
 
 
 async def txt_form(state: FSMContext) -> str:
@@ -119,7 +119,7 @@ async def input_kdtk(message: Message, bot: Bot, state: FSMContext) -> None:
             await state.set_state(FormTutupPOSReplikasi.nomor_co)
 
             await send_txt_form(bot, session_db, message, state)
-            await BaseFormQuestion(bot, state, session_db).q_nomor_co(message)
+            await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_nomor_co(message)
 
     except Exception as e:
         await handle_exception(message, bot, e)
@@ -141,7 +141,7 @@ async def input_nomor_co(message: Message, bot: Bot, state: FSMContext) -> None:
 
             if text.startswith("/kembali"):
                 await state.set_state(FormTutupPOSReplikasi.kdtk)
-                await BaseFormQuestion(bot, state, session_db).q_kdtk(message)
+                await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_kdtk(message)
                 return
 
             if text == "/tidak_ada_nomor_co":
@@ -155,7 +155,7 @@ async def input_nomor_co(message: Message, bot: Bot, state: FSMContext) -> None:
             await state.set_state(FormTutupPOSReplikasi.status)
 
             await send_txt_form(bot, session_db, message, state)
-            await BaseFormQuestion(bot, state, session_db).q_status(message)
+            await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_status(message)
 
     except Exception as e:
         await handle_exception(message, bot, e)
@@ -177,7 +177,7 @@ async def input_status(message: Message, bot: Bot, state: FSMContext) -> None:
 
             if text.startswith("/kembali"):
                 await state.set_state(FormTutupPOSReplikasi.nomor_co)
-                await BaseFormQuestion(bot, state, session_db).q_nomor_co(message)
+                await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_nomor_co(message)
                 return
 
             if len(raw_text) < 6:
@@ -194,7 +194,7 @@ async def input_status(message: Message, bot: Bot, state: FSMContext) -> None:
             await state.set_state(FormTutupPOSReplikasi.keterangan)
 
             await send_txt_form(bot, session_db, message, state)
-            await BaseFormQuestion(bot, state, session_db).q_keterangan(message)
+            await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_keterangan(message)
 
     except Exception as e:
         await handle_exception(message, bot, e)
@@ -216,7 +216,7 @@ async def input_keterangan(message: Message, bot: Bot, state: FSMContext) -> Non
 
             if text.startswith("/kembali"):
                 await state.set_state(FormTutupPOSReplikasi.status)
-                await BaseFormQuestion(bot, state, session_db).q_status(message)
+                await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_status(message)
                 return
 
             data_state = await state.get_data()
@@ -232,7 +232,7 @@ async def input_keterangan(message: Message, bot: Bot, state: FSMContext) -> Non
             await state.set_state(FormTutupPOSReplikasi.lampiran_1)
 
             await send_txt_form(bot, session_db, message, state)
-            await BaseFormQuestion(bot, state, session_db).q_lampiran_1(message)
+            await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_lampiran_1(message)
 
     except Exception as e:
         await handle_exception(message, bot, e)
@@ -251,7 +251,7 @@ async def input_lampiran_1(message: Message, bot: Bot, state: FSMContext) -> Non
 
                 if text.startswith("/kembali"):
                     await state.set_state(FormTutupPOSReplikasi.keterangan)
-                    await BaseFormQuestion(bot, state, session_db).q_keterangan(message)
+                    await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_keterangan(message)
                     return
 
                 return
@@ -279,7 +279,7 @@ async def input_lampiran_1(message: Message, bot: Bot, state: FSMContext) -> Non
             await state.update_data(files=files)
             await state.set_state(FormTutupPOSReplikasi.lampiran_2)
 
-            await BaseFormQuestion(bot, state, session_db).q_lampiran_2(message)
+            await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_lampiran_2(message)
 
     except Exception as e:
         await handle_exception(message, bot, e)
@@ -300,7 +300,7 @@ async def input_lampiran_2(message: Message, bot: Bot, state: FSMContext) -> Non
 
                 if text.startswith("/selanjutnya"):
                     await state.set_state(FormTutupPOSReplikasi.datetime_end)
-                    await BaseFormQuestion(bot, state, session_db).q_datetime_end(message)
+                    await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_datetime_end(message)
                     return
 
                 if text.startswith("/kembali"):
@@ -314,7 +314,7 @@ async def input_lampiran_2(message: Message, bot: Bot, state: FSMContext) -> Non
                     await state.update_data(files=files)
 
                     await state.set_state(FormTutupPOSReplikasi.lampiran_1)
-                    await BaseFormQuestion(bot, state, session_db).q_lampiran_1(message)
+                    await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_lampiran_1(message)
                     return
 
                 return
@@ -340,7 +340,7 @@ async def input_lampiran_2(message: Message, bot: Bot, state: FSMContext) -> Non
             await state.update_data(files=files)        
             await state.set_state(FormTutupPOSReplikasi.lampiran_3)
 
-            await BaseFormQuestion(bot, state, session_db).q_lampiran_3(message)
+            await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_lampiran_3(message)
 
     except Exception as e:
         await handle_exception(message, bot, e)
@@ -361,7 +361,7 @@ async def input_lampiran_3(message: Message, bot: Bot, state: FSMContext) -> Non
 
                 if text.startswith("/selanjutnya"):
                     await state.set_state(FormTutupPOSReplikasi.datetime_end)
-                    await BaseFormQuestion(bot, state, session_db).q_datetime_end(message)
+                    await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_datetime_end(message)
                     return
 
                 if text.startswith("/kembali"):
@@ -375,7 +375,7 @@ async def input_lampiran_3(message: Message, bot: Bot, state: FSMContext) -> Non
                     await state.update_data(files=files)
 
                     await state.set_state(FormTutupPOSReplikasi.lampiran_2)
-                    await BaseFormQuestion(bot, state, session_db).q_lampiran_2(message)
+                    await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_lampiran_2(message)
                     return
 
                 return
@@ -401,7 +401,7 @@ async def input_lampiran_3(message: Message, bot: Bot, state: FSMContext) -> Non
             await state.update_data(files=files)        
             await state.set_state(FormTutupPOSReplikasi.lampiran_4)
 
-            await BaseFormQuestion(bot, state, session_db).q_lampiran_4(message)
+            await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_lampiran_4(message)
 
     except Exception as e:
         await handle_exception(message, bot, e)
@@ -422,7 +422,7 @@ async def input_lampiran_4(message: Message, bot: Bot, state: FSMContext) -> Non
 
                 if text.startswith("/selanjutnya"):
                     await state.set_state(FormTutupPOSReplikasi.datetime_end)
-                    await BaseFormQuestion(bot, state, session_db).q_datetime_end(message)
+                    await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_datetime_end(message)
                     return
 
                 if text.startswith("/kembali"):
@@ -436,7 +436,7 @@ async def input_lampiran_4(message: Message, bot: Bot, state: FSMContext) -> Non
                     await state.update_data(files=files)
 
                     await state.set_state(FormTutupPOSReplikasi.lampiran_3)
-                    await BaseFormQuestion(bot, state, session_db).q_lampiran_3(message)
+                    await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_lampiran_3(message)
                     return
 
                 return
@@ -462,7 +462,7 @@ async def input_lampiran_4(message: Message, bot: Bot, state: FSMContext) -> Non
             await state.update_data(files=files)        
             await state.set_state(FormTutupPOSReplikasi.datetime_end)
 
-            await BaseFormQuestion(bot, state, session_db).q_datetime_end(message)
+            await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_datetime_end(message)
 
     except Exception as e:
         await handle_exception(message, bot, e)
@@ -503,7 +503,7 @@ async def input_datetime_end(message: Message, bot: Bot, state: FSMContext) -> N
 
                     await state.set_state(getattr(FormTutupPOSReplikasi, f"lampiran_{num}"))
                     await getattr(
-                        BaseFormQuestion(bot, state, session_db),
+                        TutupPOSReplikasiFormQuestion(bot, state, session_db),
                         f"q_lampiran_{num}"
                     )(message)
 
@@ -527,7 +527,7 @@ async def input_datetime_end(message: Message, bot: Bot, state: FSMContext) -> N
             await state.set_state(FormTutupPOSReplikasi.simpan)
 
             await send_txt_form(bot, session_db, message, state)
-            await BaseFormQuestion(bot, state, session_db).q_kirim(message)
+            await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_kirim(message)
 
     except Exception as e:
         await handle_exception(message, bot, e)
@@ -548,7 +548,7 @@ async def input_simpan(message: Message, bot: Bot, state: FSMContext) -> None:
 
             if text.startswith("/kembali"):
                 await state.set_state(FormTutupPOSReplikasi.datetime_end)
-                await BaseFormQuestion(bot, state, session_db).q_datetime_end(message)
+                await TutupPOSReplikasiFormQuestion(bot, state, session_db).q_datetime_end(message)
                 return
 
             if not text.startswith("/kirim"):

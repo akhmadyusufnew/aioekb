@@ -126,7 +126,7 @@ class RestoreDataFormQuestion(BaseFormQuestion):
             f"/tanpa_hitung_ulang_pkm",            
         )
     
-    async def q_lampiran_br_1(self, message: Message):
+    async def q_lampiran_rd_1(self, message: Message):
         cmd = self.command_text()
         await self.ask(
             message,
@@ -135,7 +135,7 @@ class RestoreDataFormQuestion(BaseFormQuestion):
             f"{cmd}"
         )
 
-    async def q_lampiran_br_2(self, message: Message):
+    async def q_lampiran_rd_2(self, message: Message):
         cmd = self.command_text()
         await self.ask(
             message,

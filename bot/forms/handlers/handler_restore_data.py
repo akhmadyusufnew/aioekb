@@ -554,7 +554,7 @@ async def input_hu_pkm(message: Message, bot: Bot, state: FSMContext) -> None:
             await state.set_state(FormRestoreData.lampiran_1)
 
             await send_txt_form(bot, session_db, message, state)
-            await RestoreDataFormQuestion(bot, state, session_db).q_lampiran_br_1(message)
+            await RestoreDataFormQuestion(bot, state, session_db).q_lampiran_rd_1(message)
 
     except Exception as e:
         await handle_exception(message, bot, e)
@@ -601,7 +601,7 @@ async def input_lampiran_1(message: Message, bot: Bot, state: FSMContext) -> Non
             await state.update_data(files=files)
             await state.set_state(FormRestoreData.lampiran_2)
 
-            await RestoreDataFormQuestion(bot, state, session_db).q_lampiran_br_2(message)
+            await RestoreDataFormQuestion(bot, state, session_db).q_lampiran_rd_2(message)
 
     except Exception as e:
         await handle_exception(message, bot, e)
@@ -636,7 +636,7 @@ async def input_lampiran_2(message: Message, bot: Bot, state: FSMContext) -> Non
                     await state.update_data(files=files)
 
                     await state.set_state(FormRestoreData.lampiran_1)
-                    await RestoreDataFormQuestion(bot, state, session_db).q_lampiran_br_1(message)
+                    await RestoreDataFormQuestion(bot, state, session_db).q_lampiran_rd_1(message)
                     return
 
                 return
@@ -705,7 +705,7 @@ async def input_datetime_end(message: Message, bot: Bot, state: FSMContext) -> N
                     await state.set_state(getattr(FormRestoreData, f"lampiran_{num}"))
                     await getattr(
                         RestoreDataFormQuestion(bot, state, session_db),
-                        f"q_lampiran_br_{num}"
+                        f"q_lampiran_rd_{num}"
                     )(message)
 
                     return
