@@ -48,11 +48,11 @@ async def txt_form(state: FSMContext) -> str:
     string += "IBData Akhir".ljust(15) + f": ± {data_state.get('ibdata_mb_akhir', '')} MB\n"
     string += "Alasan".ljust(15) + f": {data_state.get('alasan', '')}\n"
     string += "\n"
-    string += "Dr DB Replikasi".ljust(15) + f": {data_state.get(data_state.get('restore_from_db_replikasi') if data_state.get('restore_from_db_replikasi') else '')}\n"
-    string += "Dr BckMySQL".ljust(15) + f": {data_state.get(data_state.get('restore_from_bckmysql') if data_state.get('restore_from_bckmysql') else '')}\n"
-    string += "Dr DTHR".ljust(15) + f": {data_state.get(data_state.get('restore_from_dthr') if data_state.get('restore_from_dthr') else '')}\n"
-    string += "Dr POS Realtime".ljust(15) + f": {data_state.get(data_state.get('restore_from_posrealtime') if data_state.get('restore_from_posrealtime') else '')}\n"
-    string += "Dr File Jual".ljust(15) + f": {data_state.get(data_state.get('restore_from_file_jual') if data_state.get('restore_from_file_jual') else '')}\n"
+    string += "Dr DB Replikasi".ljust(15) + f": {data_state.get('restore_from_db_replikasi') if data_state.get('restore_from_db_replikasi') else ''}\n"
+    string += "Dr BckMySQL".ljust(15) + f": {data_state.get('restore_from_bckmysql') if data_state.get('restore_from_bckmysql') else ''}\n"
+    string += "Dr DTHR".ljust(15) + f": {data_state.get('restore_from_dthr') if data_state.get('restore_from_dthr') else ''}\n"
+    string += "Dr POS Realtime".ljust(15) + f": {data_state.get('restore_from_posrealtime') if data_state.get('restore_from_posrealtime') else ''}\n"
+    string += "Dr File Jual".ljust(15) + f": {data_state.get('restore_from_file_jual') if data_state.get('restore_from_file_jual') else ''}\n"
     string += "\n"
     string += "Autov2".ljust(15) + f": {data_state.get('autov2', '')}\n"
     string += "H.U Stok".ljust(15) + f": {data_state.get('hu_stok', '')}\n"
@@ -222,7 +222,7 @@ async def input_restore_from_db_replikasi(message: Message, bot: Bot, state: FSM
             await state.update_data(restore_from_db_replikasi=None)
             if not text.startswith("/tidak"):
                 await state.update_data(restore_from_db_replikasi=restore_from_db_replikasi)
-            
+
             await safe_delete_message(message)
             await state.set_state(FormRestoreData.restore_from_bckmysql)
 
@@ -258,7 +258,7 @@ async def input_restore_from_bckmysql(message: Message, bot: Bot, state: FSMCont
             await state.update_data(restore_from_bckmysql=None)
             if not text.startswith("/tidak"):
                 await state.update_data(restore_from_bckmysql=restore_from_bckmysql)
-            
+
             await safe_delete_message(message)
             await state.set_state(FormRestoreData.restore_from_dthr)
 

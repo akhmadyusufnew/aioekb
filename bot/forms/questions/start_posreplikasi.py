@@ -22,3 +22,27 @@ class StartPOSReplikasiFormQuestion(BaseFormQuestion):
             f"<code>PC induk maintenance EDP Lapangan</code>\n"
             f"<code>PC induk ganti disk oleh EDP Lapangan</code>\n",
         )
+
+    async def q_status(self, message: Message):
+        cmd = self.command_text()
+        keyboard_buttons = [
+            [
+                KeyboardButton(text="✅ Berhasil")
+            ],
+            [
+                KeyboardButton(text="Kendala")
+            ],
+        ]
+        await self.ask(
+            message,
+            f"Status Pembuatan:"
+            f"\n\n"
+            f"{cmd}"
+            f"\n\n"
+            f"/kendala /berhasil",
+            reply_markup=ReplyKeyboardMarkup(
+                keyboard=keyboard_buttons,
+                resize_keyboard=True,
+                one_time_keyboard=True,
+            )
+        )
