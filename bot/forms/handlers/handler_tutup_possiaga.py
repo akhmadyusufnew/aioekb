@@ -53,7 +53,7 @@ async def txt_form(state: FSMContext) -> str:
     string += "Time Selesai".ljust(12) + f": {datetime_end}\n"
     string += "Station".ljust(12) + f": {data_state.get('station', '-')}\n"
     string += "Status".ljust(12) + f": {data_state.get('status', '-')}\n"
-    string += "Keterangan".ljust(12) + f": {data_state.get('keterangan', '-')}\n\n"
+    string += "Keterangan".ljust(12) + f": {data_state.get('keterangan', '-')}\n"
     string += "\n"
     string += "Pelaksana".ljust(12) + f": {data_state.get('pelaksana_nama', '-')}\n"
     string += f"{data_state.get('id_work', '-')}\n"
