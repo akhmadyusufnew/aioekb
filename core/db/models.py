@@ -52,7 +52,7 @@ class TelegramIDDB(SQLModel, table=True):
 
 
 class SiagadanReplikasiDB(SQLModel, table=True):
-    __tablename__ = 'siaga_dan_replikasi_3'
+    __tablename__ = 'siaga_dan_replikasi'
 
     id_work: str = Field(max_length=30, primary_key=True)
     tipe: str = Field(max_length=13)
