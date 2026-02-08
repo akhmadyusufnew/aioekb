@@ -13,8 +13,8 @@ class Settings(BaseSettings):
     ADMIN_ID: int
     CHANNEL_MDB_ID: int
     GROUP_MONITORING_KLIK_ID: int
-    GROUP_MONITORING_SUPPORT_TOKO: int
-    GROUP_MONITORING_EDP_R1: int
+    GROUP_SUPPORT_TOKO: int
+    GROUP_EDP_R1: int
 
     class Config:
         env_file = ".env"

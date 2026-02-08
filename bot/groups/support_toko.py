@@ -9,7 +9,7 @@ from core.db.repository import log_telegram_event
 
 router = Router()
 
-@router.chat_member(F.chat.id == settings.GROUP_MONITORING_SUPPORT_TOKO)
+@router.chat_member(F.chat.id == settings.GROUP_SUPPORT_TOKO)
 async def welcome_new_member(update: ChatMemberUpdated, bot: Bot):
     try:
         if update.new_chat_member.status == "member" and \
