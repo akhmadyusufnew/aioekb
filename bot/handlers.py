@@ -106,7 +106,7 @@ async def private_any(message: Message, bot: Bot, state: FSMContext):
 
 # ------------------ Callback Handlers ------------------ #
 
-@router.callback_query(F.chat.type == "private", MenuMainCB.filter())
+@router.callback_query(MenuMainCB.filter())
 async def menu_main_handler(callback: CallbackQuery, callback_data: MenuMainCB, bot: Bot, state: FSMContext):
     await callback.answer()
     try:
@@ -166,7 +166,7 @@ async def menu_main_handler(callback: CallbackQuery, callback_data: MenuMainCB, 
         await handle_exception(callback.message, bot, e)
 
 
-@router.callback_query(F.chat.type == "private", MenuJadwalShiftCB.filter())
+@router.callback_query(MenuJadwalShiftCB.filter())
 async def menu_jadwal_shift_handler(callback: CallbackQuery, callback_data: MenuJadwalShiftCB, bot: Bot, state: FSMContext):
     await callback.answer()
     try:
@@ -207,7 +207,7 @@ async def menu_jadwal_shift_handler(callback: CallbackQuery, callback_data: Menu
         await handle_exception(callback.message, bot, e)
 
 
-@router.callback_query(F.chat.type == "private", MenuFormCB.filter())
+@router.callback_query(MenuFormCB.filter())
 async def menu_form_handler(callback: CallbackQuery, callback_data: MenuFormCB, bot: Bot, state: FSMContext):
     await callback.answer()
     try:
@@ -252,7 +252,7 @@ async def menu_form_handler(callback: CallbackQuery, callback_data: MenuFormCB, 
         await handle_exception(callback.message, bot, e)
 
 
-@router.callback_query(F.chat.type == "private", MenuLinkCB.filter())
+@router.callback_query(MenuLinkCB.filter())
 async def menu_link_handler(callback: CallbackQuery, callback_data: MenuLinkCB, bot: Bot, state: FSMContext):
     await callback.answer()
     try:
