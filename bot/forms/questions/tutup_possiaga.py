@@ -1,4 +1,4 @@
-from aiogram.types import Message
+from aiogram.types import Message, KeyboardButton, ReplyKeyboardMarkup
 
 from ._base import BaseFormQuestion
 
