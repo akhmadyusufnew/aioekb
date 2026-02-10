@@ -41,7 +41,7 @@ async def check_account(session_db, event: Union[Message, CallbackQuery], state:
     await state.set_state(FormRegistrasiAccount.nik)
 
     nik_question=(
-        "Bot memerlukan verifikasi akun setiap 3 bulan.\n"
+        "Bot memerlukan verifikasi akses.\n"
         "Hanya 2 langkah untuk verifikasi.\n\n"
         "🔆 Masukkan NIK Anda ..."
     )
