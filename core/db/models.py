@@ -87,25 +87,27 @@ class BackupRestoreDB(SQLModel, table=True):
     nama_toko: str = Field(max_length=60, nullable=True)
     cabang: str = Field(max_length=60, nullable=True)
 
-    alasan: str = Field(max_length=1000, nullable=True)
+    alasan: str = Field(max_length=600, nullable=True)
     ibdata_mb_awal: int = Field(nullable=True)
     ibdata_mb_akhir: int
 
-    restore_from_db_replikasi: str = Field(max_length=1000, nullable=True)
-    restore_from_bckmysql: str = Field(max_length=1000, nullable=True)
-    restore_from_dthr: str = Field(max_length=1000, nullable=True)
-    restore_from_posrealtime: str = Field(max_length=1000, nullable=True)
-    restore_from_file_jual: str = Field(max_length=1000, nullable=True)
+    restore_from_db_replikasi: str = Field(max_length=600, nullable=True)
+    restore_from_bckmysql: str = Field(max_length=600, nullable=True)
+    restore_from_dthr: str = Field(max_length=600, nullable=True)
+    restore_from_posrealtime: str = Field(max_length=600, nullable=True)
+    restore_from_file_jual: str = Field(max_length=600, nullable=True)
 
     datetime_end: datetime = Field(nullable=True)
     keterangan: str = Field(max_length=1000, nullable=True)
 
-    autov2: str = Field(max_length=60, nullable=True)
-    hu_stok: str = Field(max_length=60, nullable=True)
-    hu_spd: str = Field(max_length=60, nullable=True)
-    hu_pkm: str = Field(max_length=60, nullable=True)
+    cek_trigger: str = Field(max_length=36, nullable=True)
+    cek_relasi_tabel: str = Field(max_length=36, nullable=True)
+    autov2: str = Field(max_length=36, nullable=True)
+    hu_stok: str = Field(max_length=36, nullable=True)
+    hu_spd: str = Field(max_length=36, nullable=True)
+    hu_pkm: str = Field(max_length=36, nullable=True)
 
-    lampiran_file: str = Field(max_length=1000, nullable=True)
+    lampiran_file: str = Field(max_length=300, nullable=True)
     pelaksana_nik: str = Field(max_length=10)
     pelaksana_nama: str = Field(max_length=60)
     telegram_id: str
