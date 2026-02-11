@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-MAX_HISTORY_MONTH = 1
+MAX_HISTORY_MONTH = 6
 
 
 def parse_datetime_input(text: str, now: datetime) -> Optional[datetime]:
