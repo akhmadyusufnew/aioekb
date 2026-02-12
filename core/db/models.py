@@ -55,8 +55,8 @@ class SiagadanReplikasiDB(SQLModel, table=True):
     __tablename__ = 'siaga_dan_replikasi'
 
     id_work: str = Field(max_length=30, primary_key=True)
-    tipe: str = Field(max_length=13)
-    proses: str = Field(max_length=9)
+    tipe: str = Field(max_length=30)
+    proses: str = Field(max_length=30)
     nomor_co: str = Field(max_length=10, nullable=True)
     kdtk: str = Field(max_length=4)
     nama_toko: str = Field(max_length=60, nullable=True)
