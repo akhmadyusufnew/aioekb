@@ -131,7 +131,7 @@ class BaseFormQuestion:
 
         await self.ask(
             message,
-            f"Keterangan/catatan:"
+            f"Keterangan/catatan (boleh ketik manual, min:10, max:600):"
             f"\n\n"
             f"{cmd}",
             reply_markup=ReplyKeyboardRemove()

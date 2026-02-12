@@ -585,7 +585,7 @@ async def input_simpan(message: Message, bot: Bot, state: FSMContext) -> None:
                 SiagadanReplikasiDB(
                     id_work=id_work,
                     tipe="POS_REPLIKASI",
-                    proses="PENUTUPAN",
+                    proses="PENGEMBALIAN",
                     nomor_co=data_state.get("nomor_co"),
                     kdtk=data_state.get("kdtk"),
                     nama_toko=data_state.get("nama_toko"),
