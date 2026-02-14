@@ -45,8 +45,8 @@ async def txt_form(state: FSMContext) -> str:
 
     string  = f"🍏 #TUTUPREPLIKASI #{cabang[:4]} #{data_state.get('kdtk', '')}\n"
     string += "<pre><code>"
-    string += "Penutupan POS Replikasi\n"
-    string += "--------------------------------------\n\n"
+    string += "Pengembalian POS Replikasi\n"
+    string += "------------------------------------\n\n"
     string += "No. CO".ljust(12) + f": {data_state.get('nomor_co', '-')}\n"
     string += "Toko".ljust(12) + f": {data_state.get('kdtk', '')}{' - ' + data_state.get('nama_toko') if data_state.get('nama_toko') else ''}\n"
     string += "Cabang".ljust(12) + f": {data_state.get('cabang', '-')}\n"
@@ -54,9 +54,9 @@ async def txt_form(state: FSMContext) -> str:
     string += "Status".ljust(12) + f": {data_state.get('status', '-')}\n"
     string += "Keterangan".ljust(12) + f": {data_state.get('keterangan', '-')}\n"
     string += "\n"
-    string += "Pelaksana".ljust(12) + f": {data_state.get('pelaksana_nama', '-')}\n"
+    string += f": {data_state.get('pelaksana_nama', '-')}\n"
     string += f"{data_state.get('id_work', '-')}\n"
-    string += "--------------------------------------\n"
+    string += "------------------------------------\n"
     string += f"{datetime.now().replace(microsecond=0)}"
     string += "</code></pre>"
     return string
