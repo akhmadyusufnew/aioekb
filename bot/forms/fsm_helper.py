@@ -13,7 +13,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
 from core.config import settings
-from core.menus import menu_main
+from core.menus import menu_form
 
 from core.telegram import safe_delete_message
 
@@ -110,6 +110,6 @@ async def handle_cancel_form(message: Message, bot: Bot, state: FSMContext):
     for key in ("form_view_message_id", "form_write_message_id"):
         if data_state.get(key):
             await safe_delete_message(bot=bot, chat_id=message.chat.id, message_id=data_state[key])
-    
+
     await state.clear()
-    await message.answer("🗑 Di batalkan.", reply_markup=menu_main())
+    await message.answer("🗑 Di batalkan.", reply_markup=menu_form())
