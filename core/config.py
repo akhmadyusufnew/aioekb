@@ -12,7 +12,9 @@ class Settings(BaseSettings):
 
     ADMIN_ID: int
     CHANNEL_MDB_ID: int
+
     GROUP_MONITORING_KLIK_ID: int
+    GROUP_SUOP_NOTIFY: int
     GROUP_SUPPORT_TOKO: int
     GROUP_EDP_R1: int
 

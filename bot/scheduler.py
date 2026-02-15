@@ -1,5 +1,3 @@
-# bot/scheduler.py
-
 from collections import defaultdict
 from datetime import datetime
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -39,21 +37,18 @@ async def kirim_laporan(bot: Bot):
         rows = result.fetchall()
 
         if not rows:
-            return  # tidak kirim kalau kosong
+            return
 
         grouped = defaultdict(list)
 
-        # grouping berdasarkan TIPE (dynamic)
         for row in rows:
             tipe_clean = (row.TIPE or "").strip().upper()
             grouped[tipe_clean].append(row)
 
         pesan = "<b>⌛️ SIAGA DAN REPLIKASI</b>\n\n"
 
-        # loop semua tipe tanpa hardcode
         for tipe, items in grouped.items():
 
-            # ubah POS_SIAGA → POS SIAGA
             judul = tipe.replace("_", " ")
 
             pesan += f"<b>{judul}</b>\n"
@@ -70,18 +65,16 @@ async def kirim_laporan(bot: Bot):
 
             pesan += "\n"
 
-        # batasi panjang pesan (Telegram limit 4096)
         if len(pesan) > 4000:
             pesan = pesan[:4000] + "\n\n... (data terpotong)"
 
-        await bot.send_message(settings.ADMIN_ID, pesan)
+        await bot.send_message(settings.GROUP_SUOP_NOTIFY, pesan)
 
 
 def setup_scheduler(bot: Bot) -> AsyncIOScheduler:
     scheduler = AsyncIOScheduler(timezone="Asia/Jakarta")
 
-    # tiap 2 jam lewat 10 menit
-    trigger = CronTrigger(hour="0-23", minute=17)
+    trigger = CronTrigger(hour="0-23/2", minute=10)
 
     scheduler.add_job(
         kirim_laporan,
