@@ -165,28 +165,28 @@ async def menu_main_handler(callback: CallbackQuery, callback_data: MenuMainCB, 
             elif menu == "unduh_pos_siaga_replikasi":
                 await _safe_edit_or_reply(
                     session_db, callback,
-                    f"🏠 <b>Main Menu</b>\n\nDalam pengembangan",
+                    f"🏠 <b>Main Menu</b>\n\nDalam pengembangan\n{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
                     menu_main(user_id)
                 )
 
             elif menu == "unduh_br_rd":
                 await _safe_edit_or_reply(
                     session_db, callback,
-                    f"🏠 <b>Main Menu</b>\n\nDalam pengembangan",
+                    f"🏠 <b>Main Menu</b>\n\nDalam pengembangan\n{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
                     menu_main(user_id)
                 )
 
             elif menu == "upload_mstr_toko":
                 await _safe_edit_or_reply(
                     session_db, callback,
-                    f"🏠 <b>Main Menu</b>\n\nDalam pengembangan",
+                    f"🏠 <b>Main Menu</b>\n\nDalam pengembangan\n{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
                     menu_main(user_id)
                 )
 
             elif menu == "upload_jadwal":
                 await _safe_edit_or_reply(
                     session_db, callback,
-                    f"🏠 <b>Main Menu</b>\n\nDalam pengembangan",
+                    f"🏠 <b>Main Menu</b>\n\nDalam pengembangan\n{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
                     menu_main(user_id)
                 )                
 
