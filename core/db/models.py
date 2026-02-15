@@ -1,13 +1,14 @@
 from datetime import datetime
-from sqlmodel import SQLModel, Field, Column, DateTime, String
-from sqlalchemy import BigInteger
-
-from datetime import datetime
+from enum import Enum
 from typing import Optional
 
 from sqlmodel import SQLModel, Field
-from sqlalchemy import Column, DateTime
+from sqlalchemy import Column, String, BigInteger, DateTime, Enum as SAEnum
 
+
+class UserRole(str, Enum):
+    USER = "user"
+    ADMIN = "admin"
 
 class LogChatDB(SQLModel, table=True):
     __tablename__ = "telegram_logchat"
@@ -45,6 +46,10 @@ class TelegramIDDB(SQLModel, table=True):
 
     nik: str | None = Field(max_length=10)
     nama_lengkap: str | None = Field(max_length=100)
+
+    role: UserRole = Field(
+        sa_column=Column(SAEnum(UserRole), nullable=False, default=UserRole.USER)
+    )
 
     created_at: datetime = Field(sa_column=Column(DateTime, default=datetime.now, nullable=False))
 

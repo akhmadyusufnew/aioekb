@@ -11,8 +11,7 @@ from sqlalchemy import func
 from sqlmodel import select
 
 from core.db.database import get_session
-from core.db.models import JadwalShiftDB
-
+from core.db.models import JadwalShiftDB, UserRole
 
 BULAN_MAP = {
     "01": "JAN",
@@ -52,43 +51,66 @@ class MenuFormCB(CallbackData, prefix="menu_form"):
 class MenuLinkCB(CallbackData, prefix="menu_link"):
     menu: str
 
-def menu_main():
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text="📅 Jadwal Shift",
-                    callback_data=MenuMainCB(menu="menu_jadwal_shift").pack() 
-                ),
-                InlineKeyboardButton(
-                    text="📝 Form Laporan",
-                    callback_data=MenuMainCB(menu="menu_form").pack() 
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text="🔐 MySQL Admin",
-                    callback_data=MenuMainCB(menu="pw_mysqladmin").pack() 
-                ),
-                InlineKeyboardButton(
-                    text="👤 Profile",
-                    callback_data=MenuMainCB(menu="profile").pack()
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text="🌎 Links",
-                    callback_data=MenuMainCB(menu="menu_link").pack() 
-                )
-            ],            
-            [
-                InlineKeyboardButton(
-                    text="🔚 Selesai",
-                    callback_data=MenuMainCB(menu="exit").pack() 
-                )
-            ]
+
+def menu_main(user_data: dict):
+    inline_keyboard = [
+        [
+            InlineKeyboardButton(
+                text="📅 Jadwal Shift",
+                callback_data=MenuMainCB(menu="menu_jadwal_shift").pack()
+            ),
+            InlineKeyboardButton(
+                text="📝 Form Laporan",
+                callback_data=MenuMainCB(menu="menu_form").pack()
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                text="🔐 MySQL Admin",
+                callback_data=MenuMainCB(menu="pw_mysqladmin").pack()
+            ),
+            InlineKeyboardButton(
+                text="👤 Profile",
+                callback_data=MenuMainCB(menu="profile").pack()
+            )
         ]
-    )
+    ]
+
+    if user_data.get("role") == UserRole.ADMIN:
+
+        row1 = [
+            InlineKeyboardButton(
+                text="⬇️ Unduh Siaga/Replikasi",
+                callback_data=MenuMainCB(menu="unduh_pos_siaga_replikasi").pack()
+            ),
+            InlineKeyboardButton(
+                text="⬇️ Unduh BR/RD",
+                callback_data=MenuMainCB(menu="unduh_br_rd").pack()
+            )
+        ]
+
+        row2 = [
+            InlineKeyboardButton(
+                text="⬆️ Upload MSTR TK",
+                callback_data=MenuMainCB(menu="upload_mstr_toko").pack()
+            ),
+            InlineKeyboardButton(
+                text="⬆️ Upload Jadwal",
+                callback_data=MenuMainCB(menu="upload_jadwal").pack()
+            )
+        ]
+
+        inline_keyboard += [row1, row2]
+
+
+    inline_keyboard.append([
+        InlineKeyboardButton(
+            text="🔚 Selesai",
+            callback_data=MenuMainCB(menu="exit").pack()
+        )
+    ])
+
+    return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
 
 
 def menu_jadwal_shift():

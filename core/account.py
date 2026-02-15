@@ -7,15 +7,25 @@ from aiogram.fsm.context import FSMContext
 from sqlmodel import select
 
 from core.db.database import get_session
-from core.db.models import TelegramIDDB
+from core.db.models import TelegramIDDB, UserRole
 from bot.forms.states.registrasi_account import FormRegistrasiAccount
 
 
 async def get_user_id(session_db, chat_id: int) -> dict:
+
     stmt = select(TelegramIDDB).where(TelegramIDDB.telegram_id == chat_id)
     result = await session_db.execute(stmt)
     user = result.scalars().one_or_none()
-    return user.dict() if user else {}
+
+    if not user:
+        return {}
+
+    user_data = user.dict()
+
+    if "role" in user_data and isinstance(user_data["role"], str):
+        user_data["role"] = UserRole(user_data["role"])
+
+    return user_data
 
 
 async def check_account(session_db, event: Union[Message, CallbackQuery], state: FSMContext) -> Optional[dict]:

@@ -54,17 +54,17 @@ async def _safe_edit_or_reply(session_db, callback, text_message, reply_markup):
         await log_telegram_event(session_db, msg)
 
 
-async def send_menu_main(session_db, event):
+async def send_menu_main(session_db, event, user_id):
     """Tampilkan menu utama"""
     text = "🏠 <b>Main Menu</b>"
 
     if isinstance(event, CallbackQuery):
         await event.answer(reply_markup=ReplyKeyboardRemove())
         try:
-            msg = await event.message.edit_text(text, reply_markup=menu_main())
+            msg = await event.message.edit_text(text, reply_markup=menu_main(user_id))
             await log_telegram_event(session_db, msg)
         except Exception:
-            msg = await event.message.answer(text, reply_markup=menu_main())
+            msg = await event.message.answer(text, reply_markup=menu_main(user_id))
             await log_telegram_event(session_db, msg)
         return
 
@@ -73,7 +73,7 @@ async def send_menu_main(session_db, event):
         temp_msg = await event.answer(text="🌎", reply_markup=ReplyKeyboardRemove())
         await log_telegram_event(session_db, temp_msg)
         await safe_delete_message(temp_msg)
-        temp_msg2 = await event.answer(text, reply_markup=menu_main())
+        temp_msg2 = await event.answer(text, reply_markup=menu_main(user_id))
         await log_telegram_event(session_db, temp_msg2)
         return
 
@@ -91,7 +91,7 @@ async def command_start(message: Message, bot: Bot, state: FSMContext):
             user_id = await check_account(session_db, message, state)
             if not user_id:
                 return
-            await send_menu_main(session_db, message)
+            await send_menu_main(session_db, message, user_id)
     except Exception as e:
         await handle_exception(message, bot, e)
 
@@ -104,7 +104,7 @@ async def private_any(message: Message, bot: Bot, state: FSMContext):
             user_id = await check_account(session_db, message, state)
             if not user_id:
                 return
-            await send_menu_main(session_db, message)
+            await send_menu_main(session_db, message, user_id)
     except Exception as e:
         await handle_exception(message, bot, e)
 
@@ -124,7 +124,7 @@ async def menu_main_handler(callback: CallbackQuery, callback_data: MenuMainCB, 
             menu = callback_data.menu
 
             if menu == "menu_main":
-                await send_menu_main(session_db, callback)
+                await send_menu_main(session_db, callback, user_id)
 
             elif menu == "menu_jadwal_shift":
                 text_message = await get_jadwal_tgl_aktif(session_db)
@@ -140,7 +140,7 @@ async def menu_main_handler(callback: CallbackQuery, callback_data: MenuMainCB, 
                 await _safe_edit_or_reply(
                     session_db, callback,
                     f"🏠 <b>Main Menu</b>\n\n🔐 <code>{xor_result}</code> {datetime.now().strftime('%S%M%H')}",
-                    menu_main()
+                    menu_main(user_id)
                 )
 
             elif menu == "profile":
@@ -157,16 +157,44 @@ async def menu_main_handler(callback: CallbackQuery, callback_data: MenuMainCB, 
                     f"{sys.version}\n"
                     "</pre>"
                 )
-                await _safe_edit_or_reply(session_db, callback, f"👤 <b>Profile Saya</b>\n\n{profile_txt}", menu_main())
+                await _safe_edit_or_reply(session_db, callback, f"👤 <b>Profile Saya</b>\n\n{profile_txt}", menu_main(user_id))
 
             elif menu == "menu_link":
                 await _safe_edit_or_reply(session_db, callback, "📝 <b>Links</b>", menu_link())
+
+            elif menu == "unduh_pos_siaga_replikasi":
+                await _safe_edit_or_reply(
+                    session_db, callback,
+                    f"🏠 <b>Main Menu</b>\n\nDalam pengembangan",
+                    menu_main(user_id)
+                )
+
+            elif menu == "unduh_br_rd":
+                await _safe_edit_or_reply(
+                    session_db, callback,
+                    f"🏠 <b>Main Menu</b>\n\nDalam pengembangan",
+                    menu_main(user_id)
+                )
+
+            elif menu == "upload_mstr_toko":
+                await _safe_edit_or_reply(
+                    session_db, callback,
+                    f"🏠 <b>Main Menu</b>\n\nDalam pengembangan",
+                    menu_main(user_id)
+                )
+
+            elif menu == "upload_jadwal":
+                await _safe_edit_or_reply(
+                    session_db, callback,
+                    f"🏠 <b>Main Menu</b>\n\nDalam pengembangan",
+                    menu_main(user_id)
+                )                
 
             elif menu == "exit":
                 await safe_delete_message(callback.message)
 
             else:
-                await send_menu_main(session_db, callback)
+                await send_menu_main(session_db, callback, user_id)
     except Exception as e:
         await handle_exception(callback.message, bot, e)
 
@@ -201,7 +229,7 @@ async def menu_jadwal_shift_handler(callback: CallbackQuery, callback_data: Menu
                 label = "Jadwal Shift" if "lusa_1" in menu or "kemarin_1" in menu else f"Jadwal {menu.replace('_', ' ').title()}"
                 text_message = await get_jadwal_tgl(session_db, tanggal, label)
             elif menu == "menu_main":
-                await send_menu_main(session_db, callback)
+                await send_menu_main(session_db, callback, user_id)
                 return
             elif menu == "kalender_tahun":
                 text_message = "📅 <b>Pilih Tahun</b>"
@@ -209,7 +237,7 @@ async def menu_jadwal_shift_handler(callback: CallbackQuery, callback_data: Menu
                 await _safe_edit_or_reply(session_db, callback, text_message, keyboard)
                 return
             else:
-                await send_menu_main(session_db, callback)
+                await send_menu_main(session_db, callback, user_id)
                 return
 
             await _safe_edit_or_reply(session_db, callback, text_message, menu_jadwal_shift())
@@ -369,9 +397,9 @@ async def menu_form_handler(callback: CallbackQuery, callback_data: MenuFormCB, 
 
                 await question_cls(bot, state, session_db).q_kdtk(callback.message)
             elif menu == "menu_main":
-                await send_menu_main(session_db, callback)
+                await send_menu_main(session_db, callback, user_id)
             else:
-                await send_menu_main(session_db, callback)
+                await send_menu_main(session_db, callback, user_id)
     except Exception as e:
         await handle_exception(callback.message, bot, e)
 
@@ -385,7 +413,7 @@ async def menu_link_handler(callback: CallbackQuery, callback_data: MenuLinkCB, 
             user_id = await check_account(session_db, callback, state)
             if not user_id:
                 return
-            await send_menu_main(session_db, callback)
+            await send_menu_main(session_db, callback, user_id)
     except Exception as e:
         await handle_exception(callback.message, bot, e)
 
