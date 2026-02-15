@@ -58,9 +58,8 @@ async def txt_form(state: FSMContext) -> str:
     string += "Keterangan".ljust(15) + f": {data_state.get('keterangan', '')}\n"
     string += "\n"
     string += f"{data_state.get('pelaksana_nama', '')}\n"
-    string += f"{data_state.get('id_work', '')}\n"
-    string += "------------------------------------\n"
     string += f"{datetime.now().replace(microsecond=0)}"
+    string += f"{data_state.get('id_work', '')}\n"
     string += "</code></pre>"
     return string
 

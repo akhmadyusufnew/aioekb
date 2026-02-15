@@ -9,8 +9,13 @@ from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 
 from core.config import settings
 from core.menus import (
-    MenuMainCB, MenuJadwalShiftCB, MenuFormCB, MenuLinkCB,
-    menu_main, menu_jadwal_shift, menu_form, menu_link
+    BULAN_MAP,
+    MenuMainCB,
+    MenuJadwalShiftCB, MenuJadwalShiftTahunCB, MenuJadwalShiftBulanCB, MenuJadwalShiftTanggalCB,
+    MenuFormCB, MenuLinkCB,
+    menu_main,
+    menu_jadwal_shift, menu_jadwal_shift_kalender_tahun, menu_jadwal_shift_kalender_bulan, menu_jadwal_shift_kalender_tanggal, 
+    menu_form, menu_link
 )
 from core.account import check_account
 from core.db.database import get_session
@@ -198,11 +203,130 @@ async def menu_jadwal_shift_handler(callback: CallbackQuery, callback_data: Menu
             elif menu == "menu_main":
                 await send_menu_main(session_db, callback)
                 return
+            elif menu == "kalender_tahun":
+                text_message = "📅 <b>Pilih Tahun</b>"
+                keyboard = await menu_jadwal_shift_kalender_tahun(session_db)
+                await _safe_edit_or_reply(session_db, callback, text_message, keyboard)
+                return
             else:
                 await send_menu_main(session_db, callback)
                 return
 
             await _safe_edit_or_reply(session_db, callback, text_message, menu_jadwal_shift())
+    except Exception as e:
+        await handle_exception(callback.message, bot, e)
+
+
+@router.callback_query(MenuJadwalShiftTahunCB.filter())
+async def menu_jadwal_shift_tahun_handler(callback: CallbackQuery, callback_data: MenuJadwalShiftTahunCB, bot: Bot, state: FSMContext):
+    await callback.answer()
+    try:
+        async with get_session() as session_db:
+            await log_telegram_event(session_db, callback)
+            user_id = await check_account(session_db, callback, state)
+            if not user_id:
+                return
+            
+            menu = callback_data.menu
+
+            if menu == "menu_jadwal_shift":
+                text_message = await get_jadwal_tgl_aktif(session_db)
+                await _safe_edit_or_reply(session_db, callback, text_message, menu_jadwal_shift())
+                return
+
+            else:
+                yy = menu
+
+                periode = f"20{yy}"
+                text_message = f"📅 <b>Pilih Bulan ({periode})</b>"
+
+                keyboard = await menu_jadwal_shift_kalender_bulan(session_db, yy)
+                await _safe_edit_or_reply(session_db, callback, text_message, keyboard)
+                return
+
+    except Exception as e:
+        await handle_exception(callback.message, bot, e)
+
+
+@router.callback_query(MenuJadwalShiftBulanCB.filter())
+async def menu_jadwal_shift_bulan_handler(callback: CallbackQuery, callback_data: MenuJadwalShiftBulanCB, bot: Bot, state: FSMContext):
+    await callback.answer()
+    try:
+        async with get_session() as session_db:
+            await log_telegram_event(session_db, callback)
+            user_id = await check_account(session_db, callback, state)
+            if not user_id:
+                return
+            
+            menu = callback_data.menu
+
+            if menu == "menu_jadwal_shift_tahun":
+                text_message = "📅 <b>Pilih Tahun</b>"
+                keyboard = await menu_jadwal_shift_kalender_tahun(session_db)
+                await _safe_edit_or_reply(session_db, callback, text_message, keyboard)
+                return
+
+            else:
+                yymm = menu
+                periode = f"{BULAN_MAP.get(yymm[2:])} 20{yymm[:2]}"
+                text_message = f"📅 <b>Pilih Tanggal ({periode})</b>"
+                keyboard = await menu_jadwal_shift_kalender_tanggal(yymm)
+                await _safe_edit_or_reply(session_db, callback, text_message, keyboard)
+                return
+
+    except Exception as e:
+        await handle_exception(callback.message, bot, e)
+
+
+@router.callback_query(MenuJadwalShiftTanggalCB.filter())
+async def menu_jadwal_shift_tanggal_handler(callback: CallbackQuery, callback_data: MenuJadwalShiftTanggalCB, bot: Bot, state: FSMContext):
+    await callback.answer()
+    try:
+        async with get_session() as session_db:
+            await log_telegram_event(session_db, callback)
+            user_id = await check_account(session_db, callback, state)
+            if not user_id:
+                return
+            
+            menu = callback_data.menu
+
+            if menu.split('|')[0] == "menu_jadwal_shift_bulan":
+                yy = menu.split('|')[1][:2]
+
+                periode = f"20{yy}"
+                text_message = f"📅 <b>Pilih Bulan ({periode})</b>"               
+                keyboard = await menu_jadwal_shift_kalender_bulan(session_db, yy)
+                await _safe_edit_or_reply(session_db, callback, text_message, keyboard)
+                return
+
+            elif len(menu) == 6:
+
+                yymm = menu[:4]
+                periode = f"{BULAN_MAP.get(yymm[2:])} 20{yymm[:2]}"
+                text_message_options = f"📅 <b>Pilih Tanggal ({periode})</b>"
+
+                tanggal = datetime(int(f"20{menu[:2]}"), int(menu[2:4]), int(menu[4:]))
+                label = "Jadwal Shift"
+                text_message_data = await get_jadwal_tgl(session_db, tanggal, label)
+                text_message = f"{text_message_data}\n\n{text_message_options}"
+
+                keyboard = await menu_jadwal_shift_kalender_tanggal(yymm)
+
+                await _safe_edit_or_reply(session_db, callback, text_message, keyboard)
+                return
+            
+            else:
+                yymm = menu.split('|')[1]
+                periode = f"{BULAN_MAP.get(yymm[2:])} 20{yymm[:2]}"
+                text_message_options = f"📅 <b>Pilih Tanggal ({periode})</b>"
+
+                text_message = text_message_options
+
+                keyboard = await menu_jadwal_shift_kalender_tanggal(yymm)
+
+                await _safe_edit_or_reply(session_db, callback, text_message, keyboard)
+                return
+
     except Exception as e:
         await handle_exception(callback.message, bot, e)
 
@@ -264,3 +388,8 @@ async def menu_link_handler(callback: CallbackQuery, callback_data: MenuLinkCB, 
             await send_menu_main(session_db, callback)
     except Exception as e:
         await handle_exception(callback.message, bot, e)
+
+
+@router.callback_query(F.data == "ignore")
+async def ignore_callback(callback: CallbackQuery):
+    await callback.answer(cache_time=60)

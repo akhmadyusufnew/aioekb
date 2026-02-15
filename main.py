@@ -9,6 +9,8 @@ from aiogram.enums import ParseMode
 from core.config import settings
 from core.db.database import init_db
 
+from bot.scheduler import setup_scheduler
+
 from bot.forms.handlers import (
     registrasi_account_router,
     backup_restore_router,
@@ -51,6 +53,8 @@ async def main() -> None:
 
     dp.include_router(router_general)
 
+    setup_scheduler(bot)
+    
     await dp.start_polling(bot)
 
 

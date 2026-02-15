@@ -1,14 +1,50 @@
+import calendar
+
+from datetime import datetime
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import (
     InlineKeyboardButton,
     InlineKeyboardMarkup
 )
 
+from sqlalchemy import func
+from sqlmodel import select
+
+from core.db.database import get_session
+from core.db.models import JadwalShiftDB
+
+
+BULAN_MAP = {
+    "01": "JAN",
+    "02": "FEB",
+    "03": "MAR",
+    "04": "APR",
+    "05": "MEI",
+    "06": "JUN",
+    "07": "JUL",
+    "08": "AGU",
+    "09": "SEP",
+    "10": "OKT",
+    "11": "NOV",
+    "12": "DES"
+}
+
+HARI_LIST = ["MG", "SN", "SL", "RB", "KM", "JB", "SB"]
+
 class MenuMainCB(CallbackData, prefix="menu_main"):
     menu: str
 
 class MenuJadwalShiftCB(CallbackData, prefix="menu_jadwal_shift"):
     menu: str
+
+class MenuJadwalShiftTahunCB(CallbackData, prefix="menu_jadwal_shift_tahun"):
+    menu: str
+
+class MenuJadwalShiftBulanCB(CallbackData, prefix="menu_jadwal_shift_bulan"):
+    menu: str
+
+class MenuJadwalShiftTanggalCB(CallbackData, prefix="menu_jadwal_shift_tanggal"):
+    menu: str        
 
 class MenuFormCB(CallbackData, prefix="menu_form"):
     menu: str
@@ -100,12 +136,131 @@ def menu_jadwal_shift():
             ],
             [
                 InlineKeyboardButton(
+                    text="📅 Kalender",
+                    callback_data=MenuJadwalShiftCB(menu="kalender_tahun").pack() 
+                ),
+            ],
+            [
+                InlineKeyboardButton(
                     text="⬅️ Kembali",
                     callback_data=MenuJadwalShiftCB(menu="menu_main").pack() 
                 ),
             ],
         ]
     )
+
+
+async def menu_jadwal_shift_kalender_tahun(session_db):
+    stmt = (
+        select(func.concat("20", func.left(JadwalShiftDB.periode, 2)).label("tahun"))
+        .group_by(func.left(JadwalShiftDB.periode, 2))
+        .order_by(func.left(JadwalShiftDB.periode, 2))
+    )
+
+    result = await session_db.execute(stmt)
+    tahun_list = [r.tahun for r in result.fetchall()]
+
+    if not tahun_list:
+        return None
+
+    tombol_tahun = [
+        InlineKeyboardButton(
+            text=tahun,
+            callback_data=MenuJadwalShiftTahunCB(menu=tahun[-2:]).pack()
+        )
+        for tahun in tahun_list
+    ]
+
+    inline_keyboard = [
+        tombol_tahun[i:i+3]
+        for i in range(0, len(tombol_tahun), 3)
+    ]
+
+    inline_keyboard.append([
+        InlineKeyboardButton(
+            text="⬅️ Kembali",
+            callback_data=MenuJadwalShiftTahunCB(menu="menu_jadwal_shift").pack()
+        )
+    ])
+
+    return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
+
+
+async def menu_jadwal_shift_kalender_bulan(session_db, tahun_prefix: str):
+
+    stmt = (
+        select(func.right(JadwalShiftDB.periode, 2).label("bulan"))
+        .where(func.left(JadwalShiftDB.periode, 2) == tahun_prefix)
+        .group_by(JadwalShiftDB.periode)
+        .order_by(func.right(JadwalShiftDB.periode, 2))
+    )
+    result = await session_db.execute(stmt)
+    bulan_list = [r.bulan for r in result.fetchall()]
+
+    if not bulan_list:
+        return None
+
+    tombol_bulan = [
+        InlineKeyboardButton(
+            text=BULAN_MAP.get(bulan, bulan),
+            callback_data=MenuJadwalShiftBulanCB(menu=f"{tahun_prefix}{bulan}").pack()
+        )
+        for bulan in bulan_list
+    ]
+
+    inline_keyboard = [tombol_bulan[i:i+3] for i in range(0, len(tombol_bulan), 3)]
+
+    inline_keyboard.append([
+        InlineKeyboardButton(
+            text="⬅️ Pilih Tahun",
+            callback_data=MenuJadwalShiftBulanCB(menu=f"menu_jadwal_shift_tahun").pack()
+        )
+    ])
+
+    return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
+
+
+async def menu_jadwal_shift_kalender_tanggal(yymm: str):
+
+    year = 2000 + int(yymm[:2])
+    month = int(yymm[2:])
+
+    cal = calendar.Calendar(firstweekday=6)
+    month_days = list(cal.itermonthdays(year, month))
+
+    header_row = [
+        InlineKeyboardButton(text=hari, callback_data="ignore") for hari in HARI_LIST
+    ]
+    inline_keyboard = [header_row]
+
+    row = []
+    for day in month_days:
+        if day == 0:
+            row.append(InlineKeyboardButton(text=" ", callback_data="ignore"))
+        else:
+            row.append(
+                InlineKeyboardButton(
+                    text=str(day),
+                    callback_data=MenuJadwalShiftTanggalCB(menu=f"{yymm}{day:02}").pack()
+                )
+            )
+        if len(row) == 7:
+            inline_keyboard.append(row)
+            row = []
+
+    if row:
+        while len(row) < 7:
+            row.append(InlineKeyboardButton(text=" ", callback_data="ignore"))
+        inline_keyboard.append(row)
+
+    inline_keyboard.append([
+        InlineKeyboardButton(
+            text=f"⬅️ Pilih Bulan ({year})",
+            callback_data=MenuJadwalShiftTanggalCB(menu=f"menu_jadwal_shift_bulan|{yymm}").pack()
+        )
+    ])
+
+    return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
 
 
 def menu_form():
