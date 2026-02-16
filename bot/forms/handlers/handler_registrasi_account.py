@@ -6,6 +6,7 @@ from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from sqlmodel import select
 
+from core.account import check_account
 from core.config import settings
 from core.db.database import get_session
 from core.db.models import TelegramIDDB
