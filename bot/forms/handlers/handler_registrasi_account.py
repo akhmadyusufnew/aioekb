@@ -63,8 +63,8 @@ async def input_nama_lengkap(message: Message, bot: Bot, state: FSMContext) -> N
             TelegramIDDB.nama_lengkap == data_state.get("nama_lengkap")
             )
 
-        async with get_session() as db:
-            user = (await db.execute(stmt)).scalar_one_or_none()
+        async with get_session() as session_db:
+            user = (await session_db.execute(stmt)).scalar_one_or_none()
 
             if not user:
                 await message.reply("🫢 Verifikasi gagal. Pastikan NIK dan NAMA LENGKAP yang di kirim sesuai.")
@@ -78,7 +78,7 @@ async def input_nama_lengkap(message: Message, bot: Bot, state: FSMContext) -> N
                     ).where(
                         TelegramIDDB.telegram_id == data_state.get("telegram_id")
                     )
-                result = await db.execute(stmt2)
+                result = await session_db.execute(stmt2)
                 user_dict = dict(result.mappings().first() or {})
 
                 admin_text = (
@@ -96,14 +96,21 @@ async def input_nama_lengkap(message: Message, bot: Bot, state: FSMContext) -> N
             user.username = data_state.get("username")
             user.nama_lengkap = data_state.get("nama_lengkap")
             user.verified_at = datetime.now()
-            db.add(user)
-
-            await message.answer(
-                text="✅ Verifikasi ulang berhasil.",
-                reply_markup=menu_main()
-            )
+            session_db.add(user)
 
             await state.clear()
+
+            user_id = await check_account(session_db, message, state)
+            if user_id:          
+                await message.answer(
+                    text="✅ Verifikasi ulang berhasil.",
+                    reply_markup=menu_main(user_id)
+                )
+            
+            else:
+                await message.answer(
+                    text=f"⚠️ Verifikasi ulang gagal, hubungi <a href='tg://user?id={settings.ADMIN_ID}'>Admin</a>.",
+                )
 
     except Exception as e:
         await handle_exception(message, bot, e)

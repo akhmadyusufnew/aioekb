@@ -58,8 +58,8 @@ async def txt_form(state: FSMContext) -> str:
     string += "Keterangan".ljust(15) + f": {data_state.get('keterangan', '')}\n"
     string += "\n"
     string += f"{data_state.get('pelaksana_nama', '')}\n"
-    string += f"{datetime.now().replace(microsecond=0)}"
-    string += f"{data_state.get('id_work', '')}\n"
+    string += f"{datetime.now().replace(microsecond=0)}\n"
+    string += f"{data_state.get('id_work', '')}"
     string += "</code></pre>"
     return string
 
@@ -731,10 +731,18 @@ async def input_simpan(message: Message, bot: Bot, state: FSMContext) -> None:
             await state.clear()
 
             link = f"https://t.me/c/{str(settings.CHANNEL_MDB_ID)[4:]}/{sent_msg.message_id}"
-            await message.answer(
-                text=f"✅ Berhasil dikirim\n🔗 {link}",
-                reply_markup=menu_main()
-            )
+
+            user_id = await check_account(session_db, callback, state)
+            if user_id:          
+                await message.answer(
+                    text=f"✅ Berhasil dikirim\n🔗 {link}",
+                    reply_markup=menu_main(user_id)
+                )
+            
+            else:
+                await message.answer(
+                    text=f"✅ Berhasil dikirim\n🔗 {link}"
+                )
 
     except Exception as e:
         await handle_exception(message, bot, e)
