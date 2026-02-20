@@ -9,6 +9,7 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import ContentType, FSInputFile, Message
 
+from core.account import check_account
 from core.config import settings
 from core.db.database import get_session
 from core.db.models import BackupRestoreDB
