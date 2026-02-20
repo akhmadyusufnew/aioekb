@@ -890,13 +890,13 @@ async def input_simpan(message: Message, bot: Bot, state: FSMContext) -> None:
 
             link = f"https://t.me/c/{str(settings.CHANNEL_MDB_ID)[4:]}/{sent_msg.message_id}"
 
-            user_id = await check_account(session_db, callback, state)
-            if user_id:          
+            user_id = await check_account(session_db, message, state)
+            if user_id:
                 await message.answer(
                     text=f"✅ Berhasil dikirim\n🔗 {link}",
                     reply_markup=menu_main(user_id)
                 )
-            
+
             else:
                 await message.answer(
                     text=f"✅ Berhasil dikirim\n🔗 {link}"
