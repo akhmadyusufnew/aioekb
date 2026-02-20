@@ -675,7 +675,7 @@ async def input_datetime_end(message: Message, bot: Bot, state: FSMContext) -> N
     try:
         async with get_session() as session_db:
             await log_telegram_event(session_db, message)
-        
+
             if not message.text:
                 return
 
@@ -723,7 +723,7 @@ async def input_datetime_end(message: Message, bot: Bot, state: FSMContext) -> N
                 await state.update_data(datetime_end=dt)
 
             data_state = await state.get_data()
-            id_work = generate_id_work(data_state, "A")
+            id_work = generate_id_work(data_state, "B")
             await state.update_data(id_work=id_work)
             await state.set_state(FormRestoreData.keterangan)
             await send_txt_form(bot, session_db, message, state)
